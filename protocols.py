@@ -12,8 +12,6 @@ class TCPPacketCreator():
         self.code = 0
 
     def request(self, seq, data="abcd"):
-        # import pdb
-        # pdb.set_trace()
         check_sum = 0
         ID = os.getpid() & 0xffff
 
@@ -46,8 +44,7 @@ class TCPPacketCreator():
 
     def reply(self, rawsocket, ping_time, timeout=1):
         while True:
-            import pdb
-            pdb.set_trace()
+
             # Starting time
             started_time = time.time()
             # Instantiation select object , Can be read rawsocket, Can be written as empty , Executable is null , Timeout time
