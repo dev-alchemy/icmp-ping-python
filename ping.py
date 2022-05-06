@@ -7,16 +7,15 @@ import select
 
 from connection import Connection
 from protocols import TCPPacketCreator
-from connect import Connection
 
 conn = Connection()
 
 
-def ping(host, count=4, timeout=2):
+def ping(host, host_name, count=4, timeout=2):
 
     addr = host
-    print(str("Host") +
-          " is Ping {0} [{1}] have 32 Bytes of data :".format(str(host), str(addr)))
+    print("\npinging {0} with 32 Bytes of data :\n".format(
+        str(host)))
 
     lost = 0
     accept = 0
@@ -36,15 +35,16 @@ def ping(host, count=4, timeout=2):
             times.append(timeout * 1000)
         else:
             time0 = time0 * 1000
-            print(" come from {0} Reply to : byte =32 seq = {1} Time ={2:.2f}ms TTL={3}".format(
+            print(" 32 byte from {0} seq = {1} Time ={2:.2f}ms TTL={3}".format(
                 dst_addr, sequence, time0, ttl))
             accept += 1
             sumtime += time0
             times.append(time0)
-    # Statistics
-    print('{0} Of Ping Statistics :'.format(addr))
-    print('\t Data packets : Has been sent = {0}, Received = {1}, The loss of = {2} ({3}% The loss of ),'
+
+    print(
+        '\n-----------Ping Statistics for {0}------------------- :'.format(host_name))
+    print('\n Data packets sent = {0}, Received = {1}, lost = {2} ({3}% The loss of ),'
           .format(int(counter), accept, lost, lost // (lost + accept) * 100,))
-    print(' Estimated time of round trip ( In Milliseconds ):')
-    print('\t The shortest = {0:.2f}ms, The longest = {1:.2f}ms, Average = {2:.2f}ms'
+    print('---------------Estimated time of round trip ( In Milliseconds )---------------- \n')
+    print('The shortest = {0:.2f}ms, The longest = {1:.2f}ms, Average = {2:.2f}ms'
           .format(min(times), max(times), sum(times) // (lost + accept)))
