@@ -11,16 +11,22 @@ class TCPPacketCreator():
         self.type = 8
         self.code = 0
 
-    def request(self, seq, data="abcdefghijkl"):
-        check_sum = 0
+    def request(self, seq, data=b'aaaavvvvbbbbbbggggggcdefghiccxxxxzxcdfsdfsdsdcsdcsdcsdcsd'):
+        checksum = 0
         ID = os.getpid() & 0xffff
-        data = b'aaaavvvvbbbbbbggggggcdefghi'
-        icmp_packet = struct.pack('>BBHHH32s', self.type, self.code,
-                                  check_sum, ID, seq, data)
-        check_sum = self.create_checksum(icmp_packet)  # Get the checksums
+        # data = b'aaaavvvvbbbbbbggggggcdefghiccxxxxzxcdfsdfsdsdcsdcsdcsdcsd'
 
-        icmp_packet = struct.pack('>BBHHH32s', self.type, self.code,
-                                  check_sum, ID, seq, data)
+        icmp_packet = struct.pack('>BBHHH248s', self.type, self.code,
+                                  checksum, ID, seq, data)
+        checksum = self.create_checksum(icmp_packet)  # Get the checksums
+
+        icmp_packet = struct.pack('>BBHHH248s', self.type, self.code,
+                                  checksum, ID, seq, data)
+
+        print("Size of String representation is {}.".format(
+            struct.calcsize('>BBHHH248s')))
+        # size = struct.calcsize(icmp_packet)
+        # print("Size : ", size)
         return icmp_packet
 
     def create_checksum(self, data):
@@ -51,7 +57,8 @@ class TCPPacketCreator():
                 return -1, -1
 
             recieved = time.time()
-
+            # import pdb
+            # pdb.set_trace()
             received_packet, addr = rawsocket.recvfrom(1024)
 
             timeout = timeout - wait
@@ -59,7 +66,10 @@ class TCPPacketCreator():
                 return -1, -1, -1
             time_to_live = received_packet[8]
             icmpHeader = received_packet[20:28]
+            data = received_packet[31:]
             type, self.code, self.create_checksum, packet_id, sequence = struct.unpack(
                 ">BBHHH", icmpHeader)
+
+            print("\ data : " + str(data))
             if type == 0:
                 return recieved - ping_time, sequence, time_to_live
