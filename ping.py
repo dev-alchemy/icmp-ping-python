@@ -22,10 +22,9 @@ def ping(host, host_name, count=2, timeout=2):
     accept = 0
     sumtime = 0.0
     times = []
-    counter = 1
 
-    # for counter in range(count):
-    while counter <= count:
+    for counter in range(count):
+        counter += 1
         tcp_packet = TCPPacketCreator()
 
         icmp_packet = tcp_packet.request(int(counter))
@@ -43,8 +42,6 @@ def ping(host, host_name, count=2, timeout=2):
             accept += 1
             sumtime += reply_time
             times.append(reply_time)
-
-        counter += 1
 
     print(
         '\n-----------Ping Statistics for {0}------------------- :'.format(host_name))

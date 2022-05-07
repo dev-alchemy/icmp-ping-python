@@ -20,5 +20,8 @@ class Connection():
         server = socket.socket(
             socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
         server.setsockopt(socket.SOL_IP, socket.IP_HDRINCL, 1)
+        server.bind(("", 8008))
+
+        # server.listen()
         print("Server")
         return server

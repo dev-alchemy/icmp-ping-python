@@ -4,6 +4,8 @@ import struct
 import time
 import select
 
+from writer import write_to_file
+
 
 class TCPPacketCreator():
 
@@ -14,7 +16,6 @@ class TCPPacketCreator():
     def request(self, seq, data=b'aaaavvvvbbbbbbggggggcdefghiccxxxxzxcdfsdfsdsdcsdcsdcsdcsd'):
         checksum = 0
         ID = os.getpid() & 0xffff
-        # data = b'aaaavvvvbbbbbbggggggcdefghiccxxxxzxcdfsdfsdsdcsdcsdcsdcsd'
 
         icmp_packet = struct.pack('>BBHHH248s', self.type, self.code,
                                   checksum, ID, seq, data)
@@ -25,8 +26,7 @@ class TCPPacketCreator():
 
         print("Size of String representation is {}.".format(
             struct.calcsize('>BBHHH248s')))
-        # size = struct.calcsize(icmp_packet)
-        # print("Size : ", size)
+
         return icmp_packet
 
     def create_checksum(self, data):
@@ -67,9 +67,24 @@ class TCPPacketCreator():
             time_to_live = received_packet[8]
             icmpHeader = received_packet[20:28]
             data = received_packet[31:]
-            type, self.code, self.create_checksum, packet_id, sequence = struct.unpack(
+            type, self.code, self.checksum, packet_id, sequence = struct.unpack(
                 ">BBHHH", icmpHeader)
 
-            print("\ data : " + str(data))
+            print("ICMP DATA RECEIVED ::: ::: ::: ")
+            print("\n")
+            print("Header Packet : " + str(received_packet[0:8]))
+            print("\n data : " + str(data))
+
+            file_string = "\nSenders Address :: " + str(addr[0] + "\n")
+            file_string = file_string + \
+                ("ICMP Header :: " + str(icmpHeader) + "\n")
+            file_string = file_string + ("Type :: " + str(self.type) + "\n")
+            file_string = file_string + ("Code :: " + str(self.code) + "\n")
+            file_string = file_string + ("Sequence :: " + str(sequence) + "\n")
+            file_string = file_string + \
+                ("Data :: " + str(received_packet) + "\n")
+
+            write_to_file(file_name="recieve", write_data=file_string)
+
             if type == 0:
                 return recieved - ping_time, sequence, time_to_live
