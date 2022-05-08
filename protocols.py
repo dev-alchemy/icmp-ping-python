@@ -84,7 +84,7 @@ class TCPPacketCreator():
             file_string = file_string + \
                 ("Data :: " + str(received_packet) + "\n")
 
-            write_to_file(file_name="recieve", write_data=file_string)
+            write_to_file(file_name="request", write_data=file_string)
 
             if type == 0:
                 return recieved - ping_time, sequence, time_to_live

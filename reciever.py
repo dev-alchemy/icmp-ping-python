@@ -10,7 +10,7 @@ conn = Connection()
 sock_server = conn.create_server()
 conn.connect()
 
-print("Recieving ping from client")
+print("Recieving ")
 
 while True:
     recPacket, addr = sock_server.recvfrom(1024)
@@ -27,4 +27,4 @@ while True:
     file_string = file_string + ("Sequence :: " + str(sequence) + "\n")
     file_string = file_string + ("Data :: " + str(recPacket) + "\n")
 
-    write_to_file(file_name="sender", write_data=file_string)
+    write_to_file(file_name="reply", write_data=file_string)
